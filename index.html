@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axe Exchange - Democratizing Stock Market Access Across Africa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --gradient: linear-gradient(45deg, #FFD700, #FFA500);
+            --card-bg: rgba(255, 215, 0, 0.05);
+            --border-color: rgba(255, 215, 0, 0.2);
+            --accent-1: #FFD700;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --gradient: linear-gradient(45deg, #FFD700, #FF8C00);
+            --card-bg: rgba(255, 140, 0, 0.05);
+            --border-color: rgba(255, 140, 0, 0.2);
+            --accent-1: #FF8C00;
+            --glass-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.3s ease, color 0.3s ease;
+            font-size: clamp(16px, 2.5vw, 18px);
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, var(--border-color) 0%, rgba(0, 0, 0, 0.8) 50%);
+        }
+
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 15s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Enhanced Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: clamp(0.8rem, 2vw, 1rem) 5%;
+            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        nav.scrolled {
+            backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid var(--accent-1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            cursor: pointer;
+            color: var(--text-color);
+            padding: 0.5rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: rotate(90deg);
+            color: var(--accent-1);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: clamp(1.5rem, 3vw, 2.5rem);
+            align-items: center;
+        }
+
+        .nav-links a, .nav-links button {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+        }
+
+        .nav-links a::after, .nav-links button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after, .nav-links button:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover, .nav-links button:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+        }
+
+        .nav-cta {
+            background: var(--gradient);
+            padding: 0.8rem 1.8rem !important;
+            border-radius: 30px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: #000000 !important;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+                padding: 0;
+                margin: 0;
+            }
+
+            .hamburger {
+                display: block;
+                z-index: 1001;
+                position: relative;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 6rem 2rem 2rem;
+                z-index: 1000;
+                gap: 1.5rem;
+                transform: translateY(-100%);
+                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                align-items: center;
+                justify-content: flex-start;
+                overflow-y: auto;
+                border: 1px solid var(--border-color);
+            }
+            
+            .nav-links.active {
+                display: flex;
+                transform: translateY(0);
+            }
+            
+            .nav-links a, .nav-links button {
+                padding: 0.8rem 1rem 0.8rem 2rem;
+                font-size: clamp(0.9rem, 2.3vw, 1rem);
+                border-radius: 8px;
+                width: 90%;
+                max-width: 350px;
+                text-align: left;
+                background: var(--glass-bg);
+                border: 1px solid var(--border-color);
+                backdrop-filter: blur(5px);
+                transition: all 0.3s ease;
+                position: relative;
+                margin: 0 auto;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+            
+            .nav-links a::before, .nav-links button::before {
+                position: absolute;
+                left: 0.8rem;
+                color: var(--accent-1);
+                font-weight: bold;
+            }
+            
+            .nav-links a:hover, .nav-links button:hover {
+                transform: translateX(5px);
+                border-color: var(--accent-1);
+                background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+            }
+            
+            .nav-cta {
+                margin-top: 2rem;
+                padding: 0.8rem 1rem;
+                width: 90%;
+                max-width: 350px;
+                background: var(--gradient);
+                border: none;
+                font-size: clamp(0.9rem, 2.3vw, 1rem);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                border-radius: 8px;
+                text-align: center;
+                color: #000000 !important;
+            }
+            
+            .nav-cta::before {
+                content: none;
+            }
+            
+            .nav-cta:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        nav .nav-links a.active {
+            color: #ffffff;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: clamp(80vh, 100vw, 100vh);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding: clamp(1rem, 5vw, 2rem);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: clamp(0.8rem, 2vw, 1rem);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: clamp(0.8rem, 2vw, 1rem) clamp(1.5rem, 3vw, 2rem);
+            background: var(--gradient);
+            color: #000000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+            min-width: 120px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 1rem;
+                min-height: 80vh;
+            }
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .cta-button {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: clamp(4rem, 10vw, 6rem) clamp(3%, 5vw, 5%);
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Enhanced About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(3rem, 6vw, 4rem);
+            align-items: center;
+        }
+
+        .about-text p {
+            font-size: clamp(1rem, 2.8vw, 1.2rem);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(1.5rem, 3vw, 2rem);
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            padding: clamp(1.5rem, 4vw, 2rem);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            background: var(--card-bg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .feature-card {
+            padding: clamp(2rem, 4vw, 2.5rem);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: var(--card-bg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            width: clamp(60px, 12vw, 80px);
+            height: clamp(60px, 12vw, 80px);
+            background: var(--gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .trading-visualization {
+            height: clamp(250px, 50vw, 350px);
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Enhanced Ecosystem Section */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: clamp(2rem, 4vw, 3rem);
+        }
+
+        .ecosystem-card {
+            padding: 14px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .ecosystem-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: all 0.6s ease;
+            transform: rotate(45deg);
+        }
+
+        .ecosystem-card:hover::before {
+            opacity: 0.05;
+            transform: rotate(45deg) translate(10px, 10px);
+        }
+
+        .ecosystem-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: var(--card-bg);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-1);
+        }
+
+        .ecosystem-icon {
+            width: clamp(80px, 18vw, 100px);
+            height: clamp(80px, 18vw, 100px);
+            margin: 0 auto 2rem;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecosystem-card h3 {
+            font-size: clamp(1.3rem, 3vw, 1.6rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecosystem-card p {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            line-height: 1.7;
+            opacity: 0.9;
+            text-align: left;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecosystem-features {
+            list-style: none;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecosystem-features li {
+            font-size: clamp(0.9rem, 2.3vw, 1rem);
+            margin-bottom: 0.8rem;
+            padding: 0.8rem 1rem 0.8rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ecosystem-features li::before {
+            content: '→';
+            position: absolute;
+            left: 10px;
+            color: var(--accent-1);
+            font-weight: bold;
+        }
+
+        .ecosystem-features li:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-1);
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+        }
+
+        .ecosystem-cta {
+            margin-top: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecosystem-cta:hover {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(2rem, 4vw, 3rem);
+        }
+
+        .team-card {
+            padding: clamp(2rem, 4vw, 2.5rem);
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            background: var(--card-bg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-avatar {
+            width: clamp(100px, 22vw, 120px);
+            height: clamp(100px, 22vw, 120px);
+            border-radius: 50%;
+            background: var(--gradient);
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: #000000;
+        }
+
+        .team-role {
+            font-size: clamp(0.95rem, 2.5vw, 1rem);
+            color: var(--accent-1);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .team-linkedin-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--gradient);
+            color: #000000;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .team-linkedin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Enhanced Footer */
+        footer {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(255, 215, 0, 0.1));
+            padding: clamp(4rem, 10vw, 6rem) 5% 2rem;
+            border-top: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(2rem, 4vw, 3rem);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-section h3 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+            font-weight: 700;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            font-size: clamp(0.95rem, 2.5vw, 1rem);
+            transition: all 0.3s ease;
+            padding: 0.3rem 0;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-1);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Enhanced Responsive Design */
+        @media (max-width: 1200px) {
+            .ecosystem-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .ecosystem-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+            
+            .hero {
+                min-height: 90vh;
+                padding: 2rem 1rem;
+            }
+            
+            section {
+                padding: 4rem 4% 4rem;
+            }
+            
+            .trading-visualization {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .ecosystem-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-grid"></div>
+    </div>
+
+    <!-- Enhanced Navigation -->
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="logo" aria-label="Axe Exchange logo">Axe Exchange</div>
+            <div class="hamburger" aria-label="Toggle menu">☰</div>
+            <ul class="nav-links" role="menu">
+                <li role="menuitem"><a href="#home">Home</a></li>
+                <li role="menuitem"><a href="#about">About</a></li>
+                <li role="menuitem"><a href="#ecosystem">Platform</a></li>
+                <li role="menuitem"><a href="#team">Team</a></li>
+                <li role="menuitem"><a href="#contact">Contact</a></li>
+                <li role="menuitem"><button class="nav-cta">Get Started</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Enhanced Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Axe Exchange: Democratizing Stock Market Access</h1>
+            <p class="hero-subtitle">Empowering African investors with seamless access to local and global stock markets through technology-driven solutions. Start with as little as ₦1,000.</p>
+            <div class="cta-container">
+                <a href="#ecosystem" class="cta-button">Explore Platform</a>
+                <a href="https://docs.axe-exchange.com" class="cta-button cta-secondary">Read Docs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced About Section -->
+    <section id="about" class="fade-in">
+        <h2 class="section-title">About Axe Exchange</h2>
+        <div class="about-content">
+            <div class="fade-in-left">
+                <div class="about-text">
+                    <p>Axe Exchange is a comprehensive digital investment platform designed to bridge the gap between traditional financial markets and everyday investors across Africa, starting with Nigeria's ₦28+ trillion stock market.</p>
+                    <p>Through fractional shares, educational resources, and an intuitive mobile-first platform, we're making stock market investing accessible to everyone, regardless of income level or experience.</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number">₦28T+</div>
+                        <div class="stat-label">Nigerian Market Cap</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">220M+</div>
+                        <div class="stat-label">Population</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">₁,000</div>
+                        <div class="stat-label">Minimum Investment</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label">Listed Companies</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-right">
+                <div class="trading-visualization"></div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Fractional Shares</h3>
+                    <p>Invest in blue-chip stocks with as little as ₦1,000, making the stock market accessible to everyone.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Investment Academy</h3>
+                    <p>Comprehensive educational resources from beginner to advanced investment strategies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Ecosystem Section -->
+    <section id="ecosystem" class="fade-in">
+        <h2 class="section-title">Axe Exchange Platform</h2>
+        <div class="ecosystem-grid">
+            <!-- Trading Platform -->
+            <div class="ecosystem-card">
+                <div class="ecosystem-icon">📈</div>
+                <h3>Trading Platform</h3>
+                <p>Advanced yet intuitive trading platform with real-time data, technical analysis tools, and seamless order execution.</p>
+                <ul class="ecosystem-features">
+                    <li>Real-time market data and live price feeds</li>
+                    <li>Advanced charting with technical indicators</li>
+                    <li>One-click order execution and management</li>
+                    <li>Portfolio tracking and performance analytics</li>
+                    <li>Price alerts and market notifications</li>
+                </ul>
+                <button class="ecosystem-cta">Start Trading</button>
+            </div>
+
+            <!-- Investment Academy -->
+            <div class="ecosystem-card">
+                <div class="ecosystem-icon">🎓</div>
+                <h3>Investment Academy</h3>
+                <p>Comprehensive educational ecosystem designed to transform beginners into confident investors through structured learning paths.</p>
+                <ul class="ecosystem-features">
+                    <li>Beginner to advanced investment courses</li>
+                    <li>Daily market analysis and research reports</li>
+                    <li>Live webinars with market experts</li>
+                    <li>Investment simulator for practice trading</li>
+                    <li>Certification programs and achievements</li>
+                </ul>
+                <button class="ecosystem-cta">Learn Investing</button>
+            </div>
+
+            <!-- Social Trading -->
+            <div class="ecosystem-card">
+                <div class="ecosystem-icon">👥</div>
+                <h3>Social Trading Hub</h3>
+                <p>Connect with fellow investors, share strategies, and learn from successful traders in a secure community environment.</p>
+                <ul class="ecosystem-features">
+                    <li>Investment clubs and discussion forums</li>
+                    <li>Follow top-performing traders and analysts</li>
+                    <li>Copy trading and strategy sharing</li>
+                    <li>Performance leaderboards and achievements</li>
+                    <li>Expert insights and market commentary</li>
+                </ul>
+                <button class="ecosystem-cta">Join Community</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Team Section -->
+    <section id="team" class="fade-in">
+        <h2 class="section-title">Meet Our Leadership Team</h2>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">AO</div>
+                <h3>Adebayo Oladele</h3>
+                <p class="team-role">Chief Executive Officer</p>
+                <p>Former Goldman Sachs analyst with 8+ years in African capital markets. Expert in fintech strategy and financial inclusion initiatives across emerging markets.</p>
+                <a href="https://linkedin.com/in/adebayo-oladele" target="_blank" class="team-linkedin-button">Connect on LinkedIn</a>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">FK</div>
+                <h3>Funmi Kayode</h3>
+                <p class="team-role">Chief Technology Officer</p>
+                <p>Former Microsoft Principal Engineer with expertise in scalable financial platforms. 10+ years building trading systems and blockchain solutions.</p>
+                <a href="https://linkedin.com/in/funmi-kayode" target="_blank" class="team-linkedin-button">Connect on LinkedIn</a>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">EM</div>
+                <h3>Emmanuel Musa</h3>
+                <p class="team-role">Chief Financial Officer</p>
+                <p>Chartered Accountant with extensive experience in financial regulations, compliance, and capital markets operations across West Africa.</p>
+                <a href="https://linkedin.com/in/emmanuel-musa" target="_blank" class="team-linkedin-button">Connect on LinkedIn</a>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">SA</div>
+                <h3>Sarah Adebisi</h3>
+                <p class="team-role">Head of Product</p>
+                <p>Former Flutterwave Product Lead specializing in user experience design for financial products. Expert in African market user behavior and fintech adoption.</p>
+                <a href="https://linkedin.com/in/sarah-adebisi" target="_blank" class="team-linkedin-button">Connect on LinkedIn</a>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">OJ</div>
+                <h3>Olumide Johnson</h3>
+                <p class="team-role">Head of Marketing</p>
+                <p>Digital marketing strategist with 6+ years experience scaling fintech brands across Africa. Former growth lead at Paystack with expertise in user acquisition.</p>
+                <a href="https://linkedin.com/in/olumide-johnson" target="_blank" class="team-linkedin-button">Connect on LinkedIn</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Axe Exchange</h3>
+                <p>Democratizing stock market access across Africa through innovative technology and comprehensive education.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Platform</h3>
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#ecosystem">Platform Features</a>
+                <a href="#team">Team</a>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="https://docs.axe-exchange.com" target="_blank">Documentation</a>
+                <a href="https://docs.axe-exchange.com/whitepaper" target="_blank">Business Plan</a>
+                <a href="#contact">Support</a>
+                <a href="https://academy.axe-exchange.com" target="_blank">Investment Academy</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/disclosures">Risk Disclosures</a>
+                <a href="/regulatory">Regulatory Information</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Axe Exchange. All rights reserved. Securities offered through licensed broker-dealers.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        // Hamburger Menu
+        document.querySelector('.hamburger').addEventListener('click', () => {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(anchor.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.nav-links').classList.remove('active');
+                }
+            });
+        });
+
+        // Intersection Observer
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.classList.contains('stats-container')) {
+                        entry.target.querySelectorAll('.stat-card').forEach(card => {
+                            const number = card.querySelector('.stat-number');
+                            const text = number.textContent;
+                            let target, suffix = '';
+                            
+                            if (text.includes('₦28T+')) {
+                                target = 28;
+                                suffix = '₦28T+';
+                            } else if (text.includes('M+')) {
+                                target = parseFloat(text.replace('M+', ''));
+                                suffix = 'M+';
+                            } else if (text.includes('₁,000')) {
+                                target = 1000;
+                                suffix = '₁,000';
+                            } else if (text.includes('+')) {
+                                target = parseFloat(text.replace('+', ''));
+                                suffix = '+';
+                            }
+                            animateCounter(number, target, 1500, suffix);
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        function animateCounter(element, target, duration, suffix) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            function updateCounter() {
+                start += increment;
+                if (suffix === '₦28T+') {
+                    element.textContent = '₦28T+';
+                } else if (suffix === 'M+') {
+                    element.textContent = Math.floor(start) + 'M+';
+                } else if (suffix === '₁,000') {
+                    element.textContent = '₦' + Math.floor(start).toLocaleString();
+                } else {
+                    element.textContent = Math.floor(start).toLocaleString() + suffix;
+                }
+                if (start < target) requestAnimationFrame(updateCounter);
+            }
+            updateCounter();
+        }
+
+        // Enhanced Trading Visualization
+        function initTradingVisualization() {
+            const container = document.querySelector('.trading-visualization');
+            if (!container) return;
+            
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xFFD700, 1, 100);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+
+            // Create stock price bars
+            const bars = [];
+            const barCount = 12;
+            const geometry = new THREE.BoxGeometry(0.3, 1, 0.3);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0xFFD700,
+                emissive: 0xFFD700,
+                emissiveIntensity: 0.3,
+                shininess: 100
+            });
+
+            for (let i = 0; i < barCount; i++) {
+                const bar = new THREE.Mesh(geometry, material.clone());
+                const height = 0.5 + Math.random() * 2;
+                bar.scale.y = height;
+                bar.position.set((i - barCount/2) * 0.5, height/2, 0);
+                bar.userData = { 
+                    originalHeight: height,
+                    targetHeight: height,
+                    speed: 0.02 + Math.random() * 0.03
+                };
+                scene.add(bar);
+                bars.push(bar);
+            }
+
+            // Add connecting lines for trend
+            const lineGeometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(barCount * 3);
+            bars.forEach((bar, i) => {
+                positions[i * 3] = bar.position.x;
+                positions[i * 3 + 1] = bar.position.y + bar.scale.y / 2;
+                positions[i * 3 + 2] = bar.position.z;
+            });
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0xFFA500, linewidth: 3 });
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(line);
+
+            camera.position.z = 5;
+            camera.position.y = 1;
+
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.01;
+                
+                // Animate bars to simulate stock price changes
+                bars.forEach((bar, i) => {
+                    if (Math.random() < 0.02) {
+                        bar.userData.targetHeight = 0.5 + Math.random() * 2;
+                    }
+                    
+                    const diff = bar.userData.targetHeight - bar.scale.y;
+                    bar.scale.y += diff * bar.userData.speed;
+                    bar.position.y = bar.scale.y / 2;
+                    
+                    // Update line positions
+                    const positions = line.geometry.attributes.position.array;
+                    positions[i * 3 + 1] = bar.position.y + bar.scale.y / 2;
+                });
+                
+                line.geometry.attributes.position.needsUpdate = true;
+                
+                // Rotate camera slightly
+                camera.position.x = Math.sin(time * 0.5) * 0.5;
+                camera.lookAt(0, 1, 0);
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                if (container.clientWidth > 0) {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initTradingVisualization();
+        });
+
+        // CTA Button Actions
+        document.querySelectorAll('.nav-cta, .cta-button').forEach(button => {
+            if (button.textContent.includes('Get Started') || button.textContent.includes('Start Trading')) {
+                button.addEventListener('click', () => {
+                    alert('Sign up for early access! Platform launching Q2 2025.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
